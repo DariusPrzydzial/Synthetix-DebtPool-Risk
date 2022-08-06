@@ -37,6 +37,17 @@ def load_data():
 
     return df_as, df_Msh, df_Osh, df_Mds, df_Ods
 
+def load_data2():
+    
+    debtPoolAddrPosLPsM = pd.read_excel('SNX_stakers_analysis_lp_positions_MN.xlsx',
+                                        sheet_name='debtPoolAddrPosLPsM',
+                                        index_col=0)
+    debtPoolAddrPosLPsO = pd.read_excel('SNX_stakers_analysis_lp_positions_OP.xlsx',
+                                        sheet_name='debtPoolAddrPosLPsO',
+                                        index_col=0)
+
+    return debtPoolAddrPosLPsM, debtPoolAddrPosLPsO
+
 def process_data(df_Msh, df_Osh, df_Mds, df_Ods, SNX_PRICE):
 
     df_Msh.sort_values('collateral', ascending=False, inplace=True)
@@ -161,5 +172,72 @@ def bubble_charts(df_Mds):
     plt.xlabel('totalCollateralUSD [M]')
     plt.ylabel('debtBalanceOfUSD [M]')
     plt.title('TotalCollateralUSD vs. DebtBalanceOfUSD')
+    plt.show();
+
+def top300_charts(debtPoolAddrPosLPsM, debtPoolAddrPosLPsO):
+
+    M = debtPoolAddrPosLPsM.copy()
+    O = debtPoolAddrPosLPsO.copy()
+    M[['collateral','debtBalanceOf','posValueUSD','net_usd_value','asset_usd_value','net_usd_value']] = (M[['collateral','debtBalanceOf','posValueUSD','net_usd_value','asset_usd_value','net_usd_value']]/1e6)
+    O[['collateral','debtBalanceOf','posValueUSD','net_usd_value','asset_usd_value','net_usd_value']] = (O[['collateral','debtBalanceOf','posValueUSD','net_usd_value','asset_usd_value','net_usd_value']]/1e6)
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='collateral', logx=False, title='Mainnet, Total Debt USD [M] vs. Total Collateral SNX [M]');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='collateral', logx=False, title='Optimism, Total Debt USD [M] vs. Total Collateral SNX [M]');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='claims', logx=False, title='Mainnet, Total Debt USD [M] vs. Claims Count');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='claims', logx=False, title='Optimism, Total Debt USD [M] vs. Claims Count');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='mints', logx=False, title='Mainnet, Total Debt USD [M] vs. Mints Count');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='mints', logx=False, title='Optimism, Total Debt USD [M] vs. Mints Count');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='posValueUSD', logx=False, title='Mainnet, Total Debt USD [M] vs. Total Value of All Tokens USD [M]');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='posValueUSD', logx=False, title='Optimism, Total Debt USD [M] vs. Total Value of All Tokens USD [M]');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='chains', logx=False, title='Mainnet, Total Debt USD [M] vs. Chains with Tokens Count');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='chains', logx=False, title='Optimism, Total Debt USD [M] vs. Chains with Tokens Count');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='tokens', logx=False, title='Mainnet, Total Debt USD [M] vs. Unique Tokens Count');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='tokens', logx=False, title='Optimism, Total Debt USD [M] vs. Unique Tokens Count');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='net_usd_value', logx=False, title='Mainnet, Total Debt USD [M] vs. LP Net Value USD [M]');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='net_usd_value', logx=False, title='Optimism, Total Debt USD [M] vs. LP Net Value USD [M]');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.net_usd_value.plot.hist(ax=axes[0], bins=40, alpha=0.5, title='Mainnet, Histogram of LP Net Value USD [M]')
+    O.net_usd_value.plot.hist(ax=axes[1], bins=40, alpha=0.5, title='Optimism, Histogram of LP Net Value USD [M]')
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='chains.1', logx=False, title='Mainnet, Total Debt USD [M] vs. LP Chains Count');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='chains.1', logx=False, title='Optimism, Total Debt USD [M] vs. LP Chains Count');
+    plt.show();
+
+    plt.figure();
+    fig, axes = plt.subplots(1,2, sharex=True, sharey=True, figsize=(15,6));
+    M.plot(ax=axes[0], kind="scatter", x='debtBalanceOf', y='pools', logx=False, title='Mainnet, Total Debt USD [M] vs. Unique Pools Count');
+    O.plot(ax=axes[1], kind="scatter", x='debtBalanceOf', y='pools', logx=False, title='Optimism, Total Debt USD [M] vs. Unique Pools Count');
     plt.show();
 
