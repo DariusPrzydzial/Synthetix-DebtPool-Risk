@@ -1258,8 +1258,7 @@ def update_market_summaries():
         except Exception:
             pass
     
-    
-    df_markets['date'] = pd.to_datetime(df_markets['timestamp'], unit='s').dt.date
+        df_markets['date'] = pd.to_datetime(df_markets['timestamp'], unit='s').dt.date
     df_markets['datetime'] = pd.to_datetime(df_markets['timestamp'], unit='s').dt.round("10min")
 
     with open('df_markatsSummaries.pickle', 'wb') as handle:
@@ -1470,7 +1469,9 @@ def generate_charts_and_cvs_files():
     import time
     import matplotlib.pyplot as plt
     import os
+    import warnings
 
+    warnings.filterwarnings("ignore")
     validate = False
     
     with open('df_markatsSummaries.pickle', 'rb') as handle:
@@ -1644,6 +1645,7 @@ def generate_charts_and_cvs_files():
         plt.savefig("C:/Dropbox/public/Synthetix/"+ title + ".png")
         # plt.show()
         plt.close()
+
         return
     
     
@@ -1731,7 +1733,7 @@ def generate_charts_and_cvs_files():
     # pd.set_option("display.max_column", None)
     # pd.set_option('display.max_rows', None)
     # pd.set_option('display.width', -1)
-    pd.reset_option("all")
+    # pd.reset_option("all")
     df_data = pd.DataFrame([df_pnl.market, -df_pnl.market_debt+df_pnl.net_transfers, df_pnl.fees_paid]).T.set_index('market')
     df_data.columns = ['net_pnl','fees_paid'] 
     df_data['trader_pnl'] = df_data.net_pnl - df_data.fees_paid   
@@ -1757,6 +1759,29 @@ generate_charts_and_cvs_files()
 
 #%% check to do 
 
+def display_charts():
+
+    import datetime
+    import os
+    path = r"C:/Dropbox/public/Synthetix/LastUpdate.txt"
+    timestamp = os.path.getmtime(path)
+    datestamp = datetime.datetime.fromtimestamp(timestamp)
+    print('Last Modified Date/Time:', datestamp)
+    
+    from IPython.display import Image
+    from IPython.display import display
+    img1 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Total Cumulative Net PnL.png') 
+    img2 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Total Rolling 7 Days Net PnL.png') 
+    img3 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Total Cumulative Monthly Net PnL.png') 
+    img4 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Cumulative Net PnL by Source.png') 
+    img5 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Cumulative Net PnL by Market.png') 
+    img6 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Rolling 7 Days Net PnL.png') 
+    img7 = Image(filename='C:/Dropbox/public/Synthetix/Synthetix Perpetual Futures Cumulative Monthly Net PnL by Market.png') 
+    display(img1, img2, img3, img4, img5, img6, img7)
+
+    return
+
+#%% check to do 
 
 # UNREALIZED PNL
 # df_trade[df_trade.positionClosed==True].tail(1).T #Realized
